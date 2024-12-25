@@ -1,11 +1,15 @@
 package com.microservices_5in1.microservices_5in1.service;
 
+import com.microservices_5in1.microservices_5in1.controller.HelloWorldController;
 import com.microservices_5in1.microservices_5in1.dto.user.User;
 import com.microservices_5in1.microservices_5in1.exception.MyUserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.json.JSONObject;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.stereotype.Service;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
+
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -32,7 +36,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User findOne(int id) {
+    public EntityModel<User> findOne(int id) {
         Predicate<? super User> predicate = user -> user.getId().equals(id);
 
         User user = users.stream().filter(predicate).findFirst().orElse(null);
@@ -42,7 +46,15 @@ public class UserServiceImpl implements UserService {
             throw new MyUserNotFoundException(message);
         }
 
-        return user;
+        EntityModel<User> entityModel = EntityModel.of(user);
+
+        WebMvcLinkBuilder linkBuilder = linkTo(methodOn(HelloWorldController.class).retrieveAUser(id));
+
+        log.info("link builder - {}", linkBuilder);
+
+        entityModel.add(linkBuilder.withRel("all-users"));
+
+        return entityModel;
     }
 
     @Override

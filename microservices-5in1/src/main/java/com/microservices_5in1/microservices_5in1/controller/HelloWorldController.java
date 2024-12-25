@@ -4,6 +4,7 @@ import com.microservices_5in1.microservices_5in1.dto.user.User;
 import com.microservices_5in1.microservices_5in1.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -32,7 +33,7 @@ public class HelloWorldController {
     }
 
     @GetMapping("/users/{id}")
-    public User retrieveAUser(@PathVariable("id") int id) {
+    public EntityModel<User> retrieveAUser(@PathVariable("id") int id) {
         return userService.findOne(id);
     }
 
