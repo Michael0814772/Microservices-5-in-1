@@ -1,5 +1,6 @@
 package com.microservices_5in1.microservices_5in1.dto.user;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Past;
@@ -13,7 +14,8 @@ import java.time.LocalDate;
 @Data
 @AllArgsConstructor
 @Validated
-@JsonIgnoreProperties("id")
+//@JsonIgnoreProperties("id")
+@JsonFilter("someBeanFilter")
 public class User {
 
     private Integer id;

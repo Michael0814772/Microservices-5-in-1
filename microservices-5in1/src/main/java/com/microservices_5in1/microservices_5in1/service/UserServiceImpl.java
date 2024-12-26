@@ -1,5 +1,9 @@
 package com.microservices_5in1.microservices_5in1.service;
 
+import com.fasterxml.jackson.databind.ser.FilterProvider;
+import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
+import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
+import com.microservices_5in1.microservices_5in1.Utils.DynamicFiltering;
 import com.microservices_5in1.microservices_5in1.controller.HelloWorldController;
 import com.microservices_5in1.microservices_5in1.dto.user.User;
 import com.microservices_5in1.microservices_5in1.exception.MyUserNotFoundException;
@@ -7,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
+import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.stereotype.Service;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 
@@ -20,6 +25,8 @@ import java.util.function.Predicate;
 @RequiredArgsConstructor
 @Slf4j
 public class UserServiceImpl implements UserService {
+
+    private final DynamicFiltering dynamicFiltering;
 
     private static final List<User> users = new ArrayList<>();
 
@@ -70,5 +77,12 @@ public class UserServiceImpl implements UserService {
         users.removeIf(deleteUser -> deleteUser.getId().equals(id));
         log.info("user remaining - {}", users);
         return String.format("Successfully deleted user %s", id);
+    }
+
+    @Override
+    public MappingJacksonValue findAllDynamicFiltering() {
+        log.info("findAllDynamicFiltering");
+
+        return dynamicFiltering.seanBeanFiltering(users, "birthDate", "name");
     }
 }

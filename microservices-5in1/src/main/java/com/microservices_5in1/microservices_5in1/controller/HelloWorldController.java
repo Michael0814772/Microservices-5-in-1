@@ -6,6 +6,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -30,6 +31,16 @@ public class HelloWorldController {
     @GetMapping("/users")
     public List<User> retrieveAllUsers() {
         return userService.findAll();
+    }
+
+    @GetMapping("/users-filtering")
+    public List<User> retrieveAllUsersFiltering() {
+        return userService.findAll();
+    }
+
+    @GetMapping("/users-dynamic-filtering")
+    public MappingJacksonValue retrieveAllUsersDynamicFiltering() {
+        return userService.findAllDynamicFiltering();
     }
 
     @GetMapping("/users/{id}")
