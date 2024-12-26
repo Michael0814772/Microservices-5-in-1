@@ -1,6 +1,8 @@
 package com.microservices_5in1.microservices_5in1.controller;
 
-import com.microservices_5in1.microservices_5in1.dto.user.User;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.microservices_5in1.microservices_5in1.dto.User;
+import com.microservices_5in1.microservices_5in1.entity.UserEntity;
 import com.microservices_5in1.microservices_5in1.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -51,7 +53,7 @@ public class HelloWorldController {
     @PostMapping("/users")
     public ResponseEntity<?> retrieveAUser(@Valid @RequestBody User user) {
 
-        User savedUser = userService.save(user);
+        UserEntity savedUser = userService.save(user);
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")

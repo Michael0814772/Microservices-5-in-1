@@ -1,6 +1,7 @@
 package com.microservices_5in1.microservices_5in1.service;
 
-import com.microservices_5in1.microservices_5in1.dto.user.User;
+import com.microservices_5in1.microservices_5in1.dto.User;
+import com.microservices_5in1.microservices_5in1.entity.UserEntity;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.converter.json.MappingJacksonValue;
 
@@ -12,7 +13,7 @@ public interface UserService {
 
     EntityModel<User> findOne(int id);
 
-    User save(User user);
+    UserEntity save(User user);
 
     String deleteAUser(int id);
 

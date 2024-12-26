@@ -3,7 +3,7 @@ package com.microservices_5in1.microservices_5in1.Utils;
 import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
-import com.microservices_5in1.microservices_5in1.dto.user.User;
+import com.microservices_5in1.microservices_5in1.dto.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.stereotype.Component;
