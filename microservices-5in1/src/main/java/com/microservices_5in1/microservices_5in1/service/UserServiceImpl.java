@@ -2,15 +2,12 @@ package com.microservices_5in1.microservices_5in1.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.microservices_5in1.microservices_5in1.Utils.DynamicFiltering;
-import com.microservices_5in1.microservices_5in1.controller.HelloWorldController;
 import com.microservices_5in1.microservices_5in1.dto.User;
 import com.microservices_5in1.microservices_5in1.entity.UserEntity;
 import com.microservices_5in1.microservices_5in1.exception.MyUserNotFoundException;
 import com.microservices_5in1.microservices_5in1.repository.UserEntityRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.hateoas.EntityModel;
-import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,10 +15,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Predicate;
+import java.util.Optional;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Service
 @RequiredArgsConstructor
@@ -32,50 +28,47 @@ public class UserServiceImpl implements UserService {
     private final DynamicFiltering dynamicFiltering;
     private final ObjectMapper objectMapper;
 
-    private static final List<User> users = new ArrayList<>();
-
-    private static int usersCount = 0;
-
-    static {
-        users.add(new User(++usersCount, "Adam", LocalDate.now().minusYears(30)));
-        users.add(new User(++usersCount, "Eve", LocalDate.now().minusYears(25)));
-        users.add(new User(++usersCount, "Jim", LocalDate.now().minusYears(20)));
-    }
-
     @Transactional
     @Override
-    public List<User> findAll() {
+    public List<UserEntity> findAll() {
 
-        for (User user : users) {
-            UserEntity userEntity = new UserEntity();
-            userEntity.setName(user.getName());
-            userEntity.setBirthDate(user.getBirthDate());
-            userEntity = userEntityRepository.save(userEntity);
-            log.info("saved user entity - {}", userEntity);
-        }
-        return users;
+        //        for (User user : users) {
+//            UserEntity userEntity = new UserEntity();
+//            userEntity.setName(user.getName());
+//            userEntity.setBirthDate(user.getBirthDate());
+//            userEntity = userEntityRepository.save(userEntity);
+//            log.info("saved user entity - {}", userEntity);
+//        }
+        return userEntityRepository.findAll();
     }
 
     @Override
-    public EntityModel<User> findOne(int id) {
-        Predicate<? super User> predicate = user -> user.getId().equals(id);
+    public UserEntity findOne(int id) {
 
-        User user = users.stream().filter(predicate).findFirst().orElse(null);
+        Optional<UserEntity> findById = userEntityRepository.findById(id);
 
-        if (user == null) {
+        if (findById.isEmpty()) {
             String message = String.format("User " + id + " not found");
             throw new MyUserNotFoundException(message);
         }
+//        Predicate<? super User> predicate = user -> user.getId().equals(id);
 
-        EntityModel<User> entityModel = EntityModel.of(user);
+//        User user = users.stream().filter(predicate).findFirst().orElse(null);
 
-        WebMvcLinkBuilder linkBuilder = linkTo(methodOn(HelloWorldController.class).retrieveAUser(id));
+//        if (user == null) {
+//            String message = String.format("User " + id + " not found");
+//            throw new MyUserNotFoundException(message);
+//        }
 
-        log.info("link builder - {}", linkBuilder);
+        //        EntityModel<UserEntity> entityModel = EntityModel.of(user);
 
-        entityModel.add(linkBuilder.withRel("all-users"));
+//        WebMvcLinkBuilder linkBuilder = linkTo(methodOn(HelloWorldController.class).retrieveAUser(id));
 
-        return entityModel;
+//        log.info("link builder - {}", linkBuilder);
+
+//        entityModel.add(linkBuilder.withRel("all-users"));
+
+        return findById.get();
     }
 
     @Override
@@ -91,15 +84,16 @@ public class UserServiceImpl implements UserService {
     @Override
     public String deleteAUser(int id) {
 
-        users.removeIf(deleteUser -> deleteUser.getId().equals(id));
-        log.info("user remaining - {}", users);
-        return String.format("Successfully deleted user %s", id);
+        int deleteCount = userEntityRepository.deleteCount(id);
+        log.info("deleted count - {}", deleteCount);
+
+        return deleteCount > 0 ? String.format("Successfully deleted user %s", id) : String.format("User %s not found", id);
     }
 
     @Override
     public MappingJacksonValue findAllDynamicFiltering() {
         log.info("findAllDynamicFiltering");
 
-        return dynamicFiltering.seanBeanFiltering(users, "birthDate", "name");
+        return dynamicFiltering.seanBeanFiltering(userEntityRepository.findAll(), "birthDate", "name");
     }
 }

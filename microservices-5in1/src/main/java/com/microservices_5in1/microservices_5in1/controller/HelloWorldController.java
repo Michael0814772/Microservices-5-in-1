@@ -31,12 +31,12 @@ public class HelloWorldController {
 
     //GET ALL USERS
     @GetMapping("/users")
-    public List<User> retrieveAllUsers() {
+    public List<UserEntity> retrieveAllUsers() {
         return userService.findAll();
     }
 
     @GetMapping("/users-filtering")
-    public List<User> retrieveAllUsersFiltering() {
+    public List<UserEntity> retrieveAllUsersFiltering() {
         return userService.findAll();
     }
 
@@ -46,7 +46,7 @@ public class HelloWorldController {
     }
 
     @GetMapping("/users/{id}")
-    public EntityModel<User> retrieveAUser(@PathVariable("id") int id) {
+    public UserEntity retrieveAUser(@PathVariable("id") int id) {
         return userService.findOne(id);
     }
 
