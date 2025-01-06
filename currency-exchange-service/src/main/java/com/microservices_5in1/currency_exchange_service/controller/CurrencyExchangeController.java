@@ -24,7 +24,6 @@ public class CurrencyExchangeController {
     @GetMapping("/currency-exchange/from/{from}/to/{to}")
     public CurrencyExchangeDto retrieveExchangeValue(
             @PathVariable(value = "from") String from,
-
             @PathVariable(value = "to") String to
     ) {
         CurrencyExchangeEntity currencyExchangeEntity = currencyExchangeRepository.findByFromAndTo(from, to);
